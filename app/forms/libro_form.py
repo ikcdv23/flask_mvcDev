@@ -13,7 +13,7 @@ class LibroForm(FlaskForm):
         validators=[DataRequired(), Length(max=100)]
     )
 
-    año = StringField (
+    anio = StringField (
         "Año",validators=[Length(max=4)]
     )
     

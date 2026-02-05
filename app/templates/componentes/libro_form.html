@@ -18,9 +18,17 @@
     </div>
 
     <div>
-        <label for="{{ form.resumen.id }}">{{ form.resumen.label }}</label>
-        {{ form.resumen }}
-        {% for error in form.resumen.errors %}
+        <label for="{{ form.anio.id }}">{{ form.anio.label }}</label>
+        {{ form.anio }}
+        {% for error in form.anio.errors %}
+            <p role="alert">{{ error }}</p>
+        {% endfor %}
+    </div>
+
+    <div>
+        <label for="{{ form.categoria.id }}">{{ form.categoria.label }}</label>
+        {{ form.categoria }}
+        {% for error in form.categoria.errors %}
             <p role="alert">{{ error }}</p>
         {% endfor %}
     </div>

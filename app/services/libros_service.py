@@ -20,13 +20,13 @@ def buscar_libros_por_titulo(titulo):
 
 
 #### Funciones para crear y editar libros ###   
-def crear_libro(titulo, autor, año=None, categoria=None, codigo_socio=None):
-    libro = Libro(titulo=titulo, autor=autor, año=año, categoria=categoria, codigo_socio=codigo_socio)
+def crear_libro(titulo, autor, anio=None, categoria=None, id_socio=None):
+    libro = Libro(titulo=titulo, autor=autor, anio=anio, categoria=categoria, id_socio=id_socio)
     db.session.add(libro)
     db.session.commit()
     return libro
 
-def editar_libro(libro_id, titulo=None, autor=None, año=None, categoria=None, id_socio=None):
+def editar_libro(libro_id, titulo=None, autor=None, anio=None, categoria=None, id_socio=None):
     libro = Libro.query.get(libro_id)
     
     if not libro:
@@ -35,8 +35,8 @@ def editar_libro(libro_id, titulo=None, autor=None, año=None, categoria=None, i
         libro.titulo = titulo
     if autor is not None:
         libro.autor = autor
-    if año is not None:
-        libro.año = año
+    if anio is not None:
+        libro.anio = anio
     if categoria is not None:
         libro.categoria = categoria
     if id_socio is not None:
@@ -49,8 +49,6 @@ def editar_libro(libro_id, titulo=None, autor=None, año=None, categoria=None, i
 def prestar_libro(libro_id, id_socio):
     libro = Libro.query.get(libro_id)
 
-    
-    
     if libro and libro.id_socio is None:
         
         libro.id_socio =  id_socio

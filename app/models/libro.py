@@ -4,7 +4,7 @@ class Libro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200), nullable=False)  
     autor = db.Column(db.String(100), nullable=False)
-    año = db.Column(db.Integer, nullable=True)
+    anio = db.Column(db.Integer, nullable=True)
     categoria = db.Column(db.String(100), nullable=True)    
     id_socio = db.Column(db.Integer, db.ForeignKey("socios.id"), nullable=True  )  
     
@@ -17,7 +17,7 @@ class Libro(db.Model):
             "id": self.id,
             "titulo": self.titulo,
             "autor": self.autor,
-            "año": self.año,
+            "anio": self.anio,
             "categoria": self.categoria,
             "id_socio": self.id_socio,
         }

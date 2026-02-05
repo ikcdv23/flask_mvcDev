@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block title %}Libros{% endblock %} {% block content
+%}
+<h1>Editar Socio</h1>
+
+<form method="POST" action="{{ url_for('socios.editar', id=socio.id) }}">
+	<label for="nombre">Nombre:</label>
+	<input
+		type="text"
+		id="nombre"
+		name="nombre"
+		value="{{ socio.nombre }}"
+		required
+	/>
+
+	<label for="email">Email:</label>
+	<input
+		type="email"
+		id="email"
+		name="email"
+		value="{{ socio.email }}"
+		required
+	/>
+
+	<h2>Libros Prestados:</h2>
+	<ul>
+		{% for libro in socio.libros %}
+		<li>{{ libro.titulo }}</li>
+		{% endfor %}
+	</ul>
+
+	<button type="submit">Guardar Cambios</button>
+</form>
+{% endblock %}

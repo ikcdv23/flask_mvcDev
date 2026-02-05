@@ -25,6 +25,9 @@ def create_app():
     from app.controllers.libros_controller import libros_bp
     app.register_blueprint(libros_bp)
     
+    from app.controllers.socios_controller import socios_bp
+    app.register_blueprint(socios_bp)
+    
     from app.controllers.api_controller import api_bp
     app.register_blueprint(api_bp)
 
