@@ -4,14 +4,20 @@ class Libro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200), nullable=False)  
     autor = db.Column(db.String(100), nullable=False)
-    resumen = db.Column(db.Text, nullable=True)
-
+    año = db.Column(db.Integer, nullable=True)
+    categoria = db.Column(db.String(100), nullable=True)    
+    id_socio = db.Column(db.Integer, db.ForeignKey("socios.id"), nullable=True  )  
+    
+    # Relación con socio (un libro puede estar prestado a un socio) 
+    socio = db.relationship("Socio", back_populates="libros")
 
 
     def to_dict(self):
         return {
             "id": self.id,
             "titulo": self.titulo,
-             "autor": self.autor,
-            "resumen": self.resumen
+            "autor": self.autor,
+            "año": self.año,
+            "categoria": self.categoria,
+            "id_socio": self.id_socio,
         }
