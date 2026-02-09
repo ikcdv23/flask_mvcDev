@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %}Socio{% endblock %} {% block content
+%}
+<h1>Detalles del Socio</h1>
+<p>ID: {{ socio.id }}</p>
+<p><strong>Nombre:</strong> {{ socio.nombre }}</p>
+
+<p><strong>Email:</strong> {{ socio.email }}</p>
+
+<h2>Libros Prestados</h2>
+<ul>
+	{% for libro in socio.libros %}
+	<li>
+		{{ libro.titulo }}
+		<button onclick="location.href='{{ url_for('libros.ver', id=libro.id) }}'">
+			Ver Detalles del Libro
+		</button>
+		<button
+			onclick="location.href ='{{ url_for('libros.cancelar_reserva', id=libro.id) }}'"
+		>
+			Cancelar Reserva
+		</button>
+	</li>
+
+	{% endfor %}
+</ul>
+{% endblock %}

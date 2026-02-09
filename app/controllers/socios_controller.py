@@ -56,6 +56,12 @@ def editar(id):
         # 4. Mostramos el HTML que te pasé antes
         return render_template("paginas/socios/socio_editar.html", form=form, socio=socio)
 
+@socios_bp.route("/ver/<int:id>")
+def ver(id):
+    socio = obtener_socio(id)
+    if not socio:
+        return "Socio no encontrado", 404
+    return render_template("paginas/socios/socio_ver.html", socio=socio)
 
 # ruta para borrar el socio, con la lógica de verificación de libros pendientes
 @socios_bp.route("/borrar/<int:id>")
@@ -63,3 +69,4 @@ def borrar(id):
     exito, mensaje = borrar_socio(id)
     flash(mensaje)  # Usamos flash para mostrar el mensaje al usuario
     return redirect(url_for("socios.listar"))
+

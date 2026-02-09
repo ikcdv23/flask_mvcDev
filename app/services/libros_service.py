@@ -12,6 +12,9 @@ def listar_libros():
 def listar_libros_disponibles():
     return Libro.query.filter(Libro.codigo_socio == None).all()
 
+def listar_libros_prestados():
+    return Libro.query.filter(Libro.codigo_socio != None).all()
+
 def obtener_libro(id):
     return Libro.query.get(id)
 
@@ -52,16 +55,6 @@ def prestar_libro(libro_id, id_socio):
     if libro and libro.id_socio is None:
         
         libro.id_socio =  id_socio
-        db.session.commit()
-        return libro
-    
-    return None
-
-def devolver_libro(libro_id):
-    libro = Libro.query.get(libro_id)
-    
-    if libro and libro.id_socio is not None:
-        libro.id_socio = None
         db.session.commit()
         return libro
     

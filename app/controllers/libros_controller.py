@@ -2,6 +2,8 @@ from flask import Blueprint,  request, render_template, redirect, url_for
 from app.forms.libro_form import LibroForm
 from app.services.libros_service import *
 from app.forms.prestamos_form import PrestamosForm
+from app.services.libros_service import cancelar_reserva
+from flask import request
 
 libros_bp = Blueprint(
     "libros",
@@ -87,13 +89,3 @@ def prestar(id):
         return redirect(url_for('libros.ver', id=id))
 
     return render_template("paginas/libros/libro_prestar.html", form=form, libro=libro)
-
-# Ruta para devolver el libro (R11)
-@libros_bp.route("/cancelar_reserva/<int:id>")
-def cancelar_reserva(id):
-    # Llamamos al servicio para limpiar el socio del libro
-    from app.services.libros_service import devolver_libro
-    devolver_libro(id)
-    
-    # Redirigimos al grid para ver el cambio
-    return redirect(url_for("libros.grid"))

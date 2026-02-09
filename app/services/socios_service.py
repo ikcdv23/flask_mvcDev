@@ -1,7 +1,7 @@
 from app import db
 # Importamos cada modelo de SU PROPIA casa
 from app.models.socio import Socio
-from app.models.libro import Libro
+from app.services.libros_service import listar_libros_prestados
 
 
 def listar_socios():
@@ -11,7 +11,10 @@ def obtener_socio(id):
     return Socio.query.get(id)
 
 def listar_socios_con_libros():
-    return Socio.query.join(Libro).all()
+    # obtiene lista de libros ya prestados
+    libros_prestados = listar_libros_prestados()
+    socios_con_libros = set(libro.socio for libro in libros_prestados)
+    return list(socios_con_libros)
 
 def  crear_socio(nombre, email):
     socio = Socio(nombre=nombre, email=email)

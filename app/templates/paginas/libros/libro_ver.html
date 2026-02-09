@@ -5,7 +5,7 @@
 	<p><strong>Autor:</strong> {{ libro.autor }}</p>
 	<p><strong>Año:</strong> {{ libro.anio }}</p>
     <p><strong>Categoría:</strong> {{ libro.categoria }}</p>
-    <p>{% if id_socio %}ID Socio: {{ id_socio }}{% else %}No está prestado a ningún socio.{% endif %}</p>
+    <p>{% if libro.id_socio %}ID Socio: {{ libro.id_socio }}{% else %}No está prestado a ningún socio.{% endif %}</p>
 </div>
 <button onclick="location.href='{{ url_for('libros.listar') }}'">Volver a la lista de libros</button>
 {% endblock %}
