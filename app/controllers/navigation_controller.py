@@ -4,6 +4,7 @@ from app.models import libro
 from app.models.libro import Libro
 from app.services import libros_service
 from app.services.libros_service import crear_libro, editar_libro, listar_libros
+from flask_login import current_user
 
 navigation_bp = Blueprint(
     "navigation",
@@ -13,5 +14,7 @@ navigation_bp = Blueprint(
 
 @navigation_bp.route("/")
 def inicio():
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
     return render_template("paginas/inicio.html")
 

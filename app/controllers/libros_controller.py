@@ -2,7 +2,11 @@ from flask import Blueprint,  request, render_template, redirect, url_for
 from app.forms.libro_form import LibroForm
 from app.services.libros_service import *
 from app.forms.prestamos_form import PrestamosForm
-from app.services.libros_service import cancelar_reserva
+from app.services.libros_service import devolver_libro 
+# para poder indicar que funciones son exclusivas de admin
+from app.decorators import role_required
+
+
 from flask import request
 
 libros_bp = Blueprint(
@@ -33,6 +37,8 @@ def grid():
 
 #ruta para crear un libro
 @libros_bp.route("/crear", methods=["GET", "POST"])
+# indica que para esta funcion es necesario ser admin
+@role_required("admin")
 def crear():
     form = LibroForm()
     if request.method == "POST":
@@ -51,6 +57,7 @@ def crear():
 
 # Ruta para editar un libro 
 @libros_bp.route("/editar/<int:id>", methods=["GET", "POST"])
+@role_required("admin")
 def editar(id):
     libro = obtener_libro(id)
     
@@ -67,7 +74,7 @@ def editar(id):
             autor=form.autor.data,
             anio=form.anio.data,
             categoria=form.categoria.data
-            # Nota: No editamos el socio aquí. Eso se hace en "Prestar"
+            # Nota, No editamos el socio aquí. Eso se hace en "Prestar"
         )
         return redirect(url_for("libros.listar"))
 
@@ -75,6 +82,7 @@ def editar(id):
     return render_template("paginas/libros/libro_editar.html", form=form, libro=libro)
 
 @libros_bp.route("/prestar/<int:id>", methods=["GET", "POST"])
+@role_required("admin")
 def prestar(id):
     libro = obtener_libro(id) # Verificar el libro
     form = PrestamosForm() 
@@ -89,3 +97,14 @@ def prestar(id):
         return redirect(url_for('libros.ver', id=id))
 
     return render_template("paginas/libros/libro_prestar.html", form=form, libro=libro)
+
+
+## Ruta para cancelar reserva
+@libros_bp.route("/cancelar_reserva/<int:id>")
+@role_required("admin")
+def cancelar_reserva(id):
+    # Llamamos a la lógica que acabamos de crear
+    devolver_libro(id)
+    
+    # Te manda SIEMPRE al grid (como tú querías)
+    return redirect(url_for("libros.grid"))

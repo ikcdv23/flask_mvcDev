@@ -59,3 +59,16 @@ def prestar_libro(libro_id, id_socio):
         return libro
     
     return None
+
+### Devolver el libro
+def devolver_libro(id_libro):
+    # 1. Buscamos el libro
+    libro = Libro.query.get(id_libro)
+    
+    # 2. Si el libro existe, ponemos el socio a None (Vacío)
+    if libro:
+        # ¡OJO! Asegúrate que en tu modelo 'Libro' el campo se llama 'id_socio'
+        libro.id_socio = None 
+        db.session.commit()
+        return True
+    return False

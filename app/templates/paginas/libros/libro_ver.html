@@ -4,8 +4,32 @@
 	<h2>{{ libro.titulo }}</h2>
 	<p><strong>Autor:</strong> {{ libro.autor }}</p>
 	<p><strong>Año:</strong> {{ libro.anio }}</p>
-    <p><strong>Categoría:</strong> {{ libro.categoria }}</p>
-    <p>{% if libro.id_socio %}ID Socio: {{ libro.id_socio }}{% else %}No está prestado a ningún socio.{% endif %}</p>
+	<p><strong>Categoría:</strong> {{ libro.categoria }}</p>
+	<p>
+		{% if libro.id_socio %}ID Socio: {{ libro.id_socio }}{% else %}No está
+		prestado a ningún socio.{% endif %}
+	</p>
 </div>
-<button onclick="location.href='{{ url_for('libros.listar') }}'">Volver a la lista de libros</button>
+<div class="mt-3 d-flex justify-content-between">
+	<a
+		href="{{ url_for('libros.ver', id=libro.id) }}"
+		class="btn btn-info btn-sm text-white"
+	>
+		Ver
+	</a>
+
+	{% if current_user.is_authenticated and current_user.username == 'admin' %}
+	<div>
+		<a
+			href="{{ url_for('libros.editar', id=libro.id) }}"
+			class="btn btn-warning btn-sm"
+		>
+			<i class="fas fa-pencil-alt"></i> Editar
+		</a>
+	</div>
+	{% endif %}
+</div>
+<button class="btn btn-primary" onclick="location.href='{{ url_for('libros.grid') }}'">
+	Volver a la lista de libros
+</button>
 {% endblock %}

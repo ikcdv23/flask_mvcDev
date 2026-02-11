@@ -3,6 +3,10 @@
 <h1>Editar Socio</h1>
 
 <form method="POST" action="{{ url_for('socios.editar', id=socio.id) }}">
+
+	{{ form.hidden_tag() }}
+	
+
 	<label for="nombre">Nombre:</label>
 	<input
 		type="text"
@@ -28,6 +32,7 @@
 		{% endfor %}
 	</ul>
 
-	<button type="submit">Guardar Cambios</button>
+	<button type="submit" class="btn btn-success">Guardar Cambios</button>
+
 </form>
 {% endblock %}

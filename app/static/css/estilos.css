@@ -1,100 +1,159 @@
-    :root {
-            --bg: #f4f6f8;
-            --card: #ffffff;
-            --primary: #c0beeb;
-            --secondary: #64748b;
-            --text: #1e293b;
-        }
-  *{    
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      
+:root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --primary: #c0beeb;      /* Lila suave */
+    --primary-dark: #9da0d6; /* Lila un poco más oscuro para hover */
+    --secondary: #64748b;
+    --text: #1e293b;
+    --danger: #ef4444;       /* Rojo para cerrar sesión */
+}
 
-  }
-  html{
-      font-family: Arial, sans-serif;
-        font-size: clamp(16px, 4vw, 18px);
-  }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-  
-  header {
-            background: #333;
-            padding: 1rem;
-        }
-         header a {
-            color: white;
-            margin-right: 1rem;
-            text-decoration: none;
-        }
-        header a:hover {
-            text-decoration: underline;
-        }
-        main {
-                max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
+html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: clamp(16px, 1vw, 18px); /* Tamaño responsive */
+    background-color: var(--bg);
+    color: var(--text);
+}
 
-    .grid-container {
-           display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-    }
+/* --- ESTILOS DEL HEADER MODERNIZADO --- */
+header {
+    background: var(--card); /* Fondo blanco limpio */
+    padding: 0; /* Quitamos padding externo, lo manejamos dentro */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+    position: sticky; /* Se queda pegado arriba al hacer scroll */
+    top: 0;
+    z-index: 1000;
+}
 
-    .grid-container h1{
-        text-align: center;
-        background-color: rgba(34, 33, 33, 0.719);
-        color: white;
-        padding: 0.5rem;
-        border-radius: 5px 5px 0 0;
-    }
-    .grid-item{
-        background-color: #f4f4f4;
-    
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    
-        .card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-                .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-        }
-        
-        .card h1 {
-            margin: 0 0 0.5rem;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
+header nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex; /* Flexbox para alinear elementos */
+    justify-content: space-between; /* Enlaces a la izq, login a la der */
+    align-items: center; /* Centrado verticalmente */
+}
 
-        .autor {
-            font-size: 0.9rem;
-            color: var(--secondary);
-            margin-bottom: 1rem;
-        }
+/* Enlaces del menú (Inicio, Libros, etc.) */
+header nav > a {
+    color: var(--text);
+    margin-right: 1.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+}
 
-        .resumen {
-            flex-grow: 1;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
+header nav > a:hover {
+    color: var(--secondary);
+    border-bottom: 2px solid var(--primary); /* Línea inferior al pasar ratón */
+}
+
+/* --- ESTILOS PARA LOS BOTONES (Login/Logout) --- */
+/* Esto hace que las clases .btn de tu HTML se vean como botones reales */
+.btn {
+
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Botón Primario (Iniciar Sesión) */
+.btn-primary {
+    background-color: var(--primary);
+    color: #fff; /* O var(--text) si prefieres contraste oscuro */
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* Botón Danger (Cerrar Sesión) */
+.btn-danger {
+    background-color: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+.btn-danger:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+/* --- RESTO DE TU CSS (GRID Y CARDS) --- */
+
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    /* Espacio extra abajo para no chocar con el footer fijo */
+    padding-bottom: 80px; 
+}
+
+footer {
+    background: #1e293b; /* Un gris oscuro azulado */
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Tus estilos de cartas existentes */
+.card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.05); /* Borde sutil */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+}
+
+.card h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.3rem;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.autor {
+    font-size: 0.9rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.id_socio {
+    margin-top: auto; /* Empuja esto al final de la tarjeta */
+    padding-top: 1rem;
+    font-weight: bold;
+}

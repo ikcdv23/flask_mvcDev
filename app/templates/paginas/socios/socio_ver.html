@@ -1,26 +1,83 @@
-{% extends "base.html" %} {% block title %}Socio{% endblock %} {% block content
-%}
-<h1>Detalles del Socio</h1>
-<p>ID: {{ socio.id }}</p>
-<p><strong>Nombre:</strong> {{ socio.nombre }}</p>
+{% extends "base.html" %}
 
-<p><strong>Email:</strong> {{ socio.email }}</p>
+{% block title %}Ficha de Socio{% endblock %}
 
-<h2>Libros Prestados</h2>
-<ul>
-	{% for libro in socio.libros %}
-	<li>
-		{{ libro.titulo }}
-		<button onclick="location.href='{{ url_for('libros.ver', id=libro.id) }}'">
-			Ver Detalles del Libro
-		</button>
-		<button
-			onclick="location.href ='{{ url_for('libros.cancelar_reserva', id=libro.id) }}'"
-		>
-			Cancelar Reserva
-		</button>
-	</li>
+{% block content %}
+<div class="container mt-4">
+    
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0"><i class="fas fa-id-card"></i> Ficha de Socio</h2>
+            <div>
+                <a href="{{ url_for('socios.editar', id=socio.id) }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                
+                {% if not socio.libros %}
+                    <a href="{{ url_for('socios.borrar', id=socio.id) }}" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Estás seguro de eliminar a este socio?')">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </a>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled title="No se puede borrar con libros pendientes">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> {{ socio.nombre }}</p>
+                    <p><strong>Email:</strong> {{ socio.email }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>ID de Socio:</strong> <span class="badge bg-secondary">#{{ socio.id }}</span></p>
+                    <p><strong>Estado:</strong> 
+                        {% if socio.libros %}
+                            <span class="badge bg-warning text-dark">Tiene Préstamos Activos</span>
+                        {% else %}
+                            <span class="badge bg-success">Libre de deudas</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	{% endfor %}
-</ul>
+    <h3 class="h5 mb-3"><i class="fas fa-book-reader"></i> Historial de Préstamos Activos</h3>
+    
+    {% if socio.libros %}
+        <div class="grid-container">
+            {% for libro in socio.libros %}
+            <div class="card h-100 border-primary">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ libro.titulo }}</h5>
+                    <p class="card-text text-muted">Autor: {{ libro.autor }}</p>
+                    
+                    <a href="{{ url_for('libros.cancelar_reserva', id=libro.id) }}" 
+                       class="btn btn-outline-danger btn-sm w-100">
+                        <i class="fas fa-undo"></i> Devolver Libro
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Este socio no tiene ningún libro prestado actualmente.
+        </div>
+        <a href="{{ url_for('libros.grid') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Realizar un nuevo préstamo
+        </a>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('socios.listar') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Listado
+        </a>
+    </div>
+
+</div>
 {% endblock %}
