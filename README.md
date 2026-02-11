@@ -106,3 +106,6 @@ source venv/bin/activate
 
 # Para instalar las dependencias haremos uso de requirements.txt
 pip install -r requirements.txt
+
+# Iniciar todo
+py run.py
