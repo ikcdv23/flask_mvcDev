@@ -1,10 +1,14 @@
-from flask import Blueprint,  request, render_template, redirect, url_for
+from flask import Blueprint,  request, render_template, redirect, url_for, flash
 from app.forms.libro_form import LibroForm
-from app.services.libros_service import *
+
 from app.forms.prestamos_form import PrestamosForm
-from app.services.libros_service import devolver_libro 
+from app.forms.buscar_form import BuscarForm
+
+from app.services.libros_service import *
+
 # para poder indicar que funciones son exclusivas de admin
 from app.decorators import role_required
+
 
 
 from flask import request
@@ -30,11 +34,35 @@ def ver(id):
     return render_template("paginas/libros/libro_ver.html", libro=libro)
 
 # Ruta para ver los libros en formato grid
-@libros_bp.route("/grid")
+# he modificado la funcion de grid para que permita implementar un buscador
+@libros_bp.route("/grid", methods=["GET"])
 def grid():
-    libros = listar_libros()
-    return render_template("paginas/libros/librosGrid.html", libros=libros)
+    form = BuscarForm(request.args)
+    busqueda_activa = False
+    
+    # Capturamos si el usuario ha pulsado el botón "Ver Disponibles"
+    filtro_activo = request.args.get('filtro') # Puede ser 'disponibles' o None
 
+    if form.validate() and form.busqueda.data:
+        # 1. Si busca algo, prioridad al buscador
+        libros = buscar_libros(form.busqueda.data)
+        busqueda_activa = True
+    elif filtro_activo == 'disponibles':
+        # 2. Si no busca, pero quiere ver disponibles (R2)
+        libros = listar_libros_disponibles()
+    else:
+        # 3. Si no hay nada, mostrar todo
+        libros = listar_libros()
+
+    return render_template(
+        "paginas/libros/librosGrid.html", 
+        libros=libros, 
+        form=form, 
+        busqueda=busqueda_activa,
+        filtro_activo=filtro_activo 
+    )
+    
+    
 #ruta para crear un libro
 @libros_bp.route("/crear", methods=["GET", "POST"])
 # indica que para esta funcion es necesario ser admin
@@ -108,3 +136,18 @@ def cancelar_reserva(id):
     
     # Te manda SIEMPRE al grid (como tú querías)
     return redirect(url_for("libros.grid"))
+
+### ruta para eliminar un libro
+@libros_bp.route("/eliminar/<int:id>")
+@role_required('admin') # Solo el admin puede borrar
+def eliminar(id):
+    # Llamamos al servicio
+    exito, mensaje = eliminar_libro(id)
+    
+    if exito:
+        flash(mensaje, "success")
+    else:
+        # Si falló (por estar prestado o error), mostramos error rojo
+        flash(mensaje, "danger")
+        
+    return redirect(url_for('libros.grid'))

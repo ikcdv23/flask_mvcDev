@@ -6,7 +6,9 @@ api_bp = Blueprint(
     url_prefix="/api"
 )
 
-@api_bp.route("/listar", methods=["GET"])
+@api_bp.route("/libros", methods=["GET"])
 def listar():
     libros = listar_libros()
     return jsonify([l.to_dict() for l in libros])   
+
+# @api_bp.route("/libros/disponibles", methods=["GET"])

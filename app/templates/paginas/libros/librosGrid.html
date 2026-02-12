@@ -1,51 +1,163 @@
 {% extends "base.html" %} {% block title %}Libros{% endblock %} {% block content
 %}
-<h1>Libros</h1>
 
-<div class="grid-container">
-	{% for libro in libros %}
-	<div class="card">
-		<h1>Titulo: {{ libro.titulo }}</h1>
-		<div class="autor">Autor: {{ libro.autor }}</div>
-		<div class="anio">Año: {{ libro.anio }}</div>
-		<div class="categoria">Categoría: {{ libro.categoria }}</div>
-		<div class="id_socio">
-			Disponible:{% if not libro.id_socio %}Sí{% else %}No{% endif %}
-		</div>
-		<div class="mt-3 d-flex justify-content-between">
-			<button
-				class="btn btn-primary"
-				onclick="location.href='{{ url_for('libros.ver', id=libro.id) }}'"
-			>
-				ver
-			</button>
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h1>
+			{% if filtro_activo == 'disponibles' %} Libros Disponibles {% else %}
+			Catálogo Completo {% endif %}
+		</h1>
 
-			{% if current_user.is_authenticated and current_user.username == 'admin'
-			%}
-			<button
-				class="btn btn-primary"
-				onclick="location.href='{{ url_for('libros.editar', id=libro.id) }}'"
-			>
-				Editar
-			</button>
-			{% endif %}
-		</div>
-		<div>
-			{% if not libro.id_socio %}<button
-				class="btn btn-primary"
-				onclick="location.href='{{ url_for('libros.prestar', id=libro.id) }}'"
-			>
-				Prestar</button
-			>{% else %}
-			<button
-				class="btn btn-danger"
-				onclick="location.href='{{ url_for('libros.cancelar_reserva', id=libro.id) }}'"
-			>
-				Cancelar Préstamo</button
-			>{% endif %}
+		{% if current_user.is_authenticated and current_user.username == 'admin' %}
+		<a href="{{ url_for('libros.crear') }}" class="btn btn-success">
+			<i class="fas fa-plus"></i> Nuevo Libro
+		</a>
+		{% endif %}
+	</div>
+
+	<div class="card p-3 mb-4 bg-light shadow-sm">
+		<div class="row g-3 align-items-center">
+			<div class="col-md-8">
+				<form
+					action="{{ url_for('libros.grid') }}"
+					method="GET"
+					class="d-flex gap-2"
+				>
+					{{ form.busqueda(class="form-control", placeholder="Buscar por título
+					o autor...") }}
+
+					<button class="btn btn-primary" type="submit">
+						<i class="fas fa-search"></i>
+					</button>
+
+					{% if busqueda %}
+					<a
+						href="{{ url_for('libros.grid') }}"
+						class="btn btn-outline-secondary"
+						title="Limpiar búsqueda"
+					>
+						<i class="fas fa-times"></i>
+					</a>
+					{% endif %}
+				</form>
+				{% for error in form.busqueda.errors %}
+				<span class="text-danger small">{{ error }}</span>
+				{% endfor %}
+			</div>
+
+			<div class="col-md-4 text-md-end">
+				<div class="btn-group" role="group" aria-label="Filtros">
+					<a
+						href="{{ url_for('libros.grid') }}"
+						class="btn btn-outline-primary {% if not filtro_activo %}active{% endif %}"
+					>
+						Todos
+					</a>
+
+					<a
+						href="{{ url_for('libros.grid', filtro='disponibles') }}"
+						class="btn btn-outline-success {% if filtro_activo == 'disponibles' %}active{% endif %}"
+					>
+						<i class="fas fa-check"></i> Disponibles
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
-	{% endfor %}
-</div>
 
+	{% if libros %}
+	<div class="grid-container">
+		{% for libro in libros %}
+		<div class="card h-100 shadow-sm border-0">
+			<div class="card-body">
+				<h3 class="h5 card-title">{{ libro.titulo }}</h3>
+				<div class="autor text-muted mb-2">
+					<strong>Autor:</strong> {{ libro.autor }}
+				</div>
+
+				<p class="card-text small mb-2">
+					<span class="badge bg-light text-dark border"
+						>Año: {{ libro.anio }}</span
+					>
+					<span class="badge bg-light text-dark border"
+						>{{ libro.categoria }}</span
+					>
+				</p>
+
+				<div class="mb-3">
+					{% if not libro.id_socio %}
+					<span class="badge bg-success w-100">Disponible</span>
+					{% else %}
+					<span class="badge bg-warning text-dark w-100">Prestado</span>
+					{% endif %}
+				</div>
+
+				<div class="d-grid gap-2">
+					<a
+						href="{{ url_for('libros.ver', id=libro.id) }}"
+						class="btn btn-info btn-sm text-white"
+					>
+						Ver Detalle
+					</a>
+
+					{% if current_user.is_authenticated and current_user.username ==
+					'admin' %}
+
+					<div class="btn-group">
+						<a
+							href="{{ url_for('libros.editar', id=libro.id) }}"
+							class="btn btn-primary btn-sm"
+							>Editar</a
+						>
+
+						{% if libro.id_socio %}
+						<button class="btn btn-secondary btn-sm" disabled>
+							<i class="fas fa-trash"></i>
+						</button>
+						{% else %}
+						<a
+							href="{{ url_for('libros.eliminar', id=libro.id) }}"
+							class="btn btn-danger btn-sm"
+							onclick="return confirm('¿Borrar libro?')"
+							><i class="fas fa-trash"></i
+						></a>
+						{% endif %}
+					</div>
+
+					{% if not libro.id_socio %}
+					<a
+						href="{{ url_for('libros.prestar', id=libro.id) }}"
+						class="btn btn-success btn-sm"
+						>Prestar</a
+					>
+					{% else %}
+					<a
+						href="{{ url_for('libros.cancelar_reserva', id=libro.id) }}"
+						class="btn btn-warning btn-sm"
+						>Devolver</a
+					>
+					{% endif %} {% endif %}
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+	{% else %}
+	<div class="alert alert-warning text-center mt-4 p-5">
+		<h4><i class="fas fa-book-open"></i> No se encontraron libros</h4>
+		{% if filtro_activo == 'disponibles' %}
+		<p>Actualmente no hay libros disponibles para préstamo.</p>
+		<a href="{{ url_for('libros.grid') }}" class="btn btn-primary mt-2"
+			>Ver libros prestados</a
+		>
+		{% else %}
+		<p>No hay resultados para tu búsqueda.</p>
+		<a href="{{ url_for('libros.grid') }}" class="btn btn-primary mt-2"
+			>Limpiar filtros</a
+		>
+		{% endif %}
+	</div>
+	{% endif %}
+</div>
 {% endblock %}

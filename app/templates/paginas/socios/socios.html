@@ -1,80 +1,110 @@
 {% extends "base.html" %} {% block title %}Gestión de Socios{% endblock %} {%
 block content %}
-<h1>Listado de Socios</h1>
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h1><i class="fas fa-users"></i> Gestión de Socios</h1>
+		<a href="{{ url_for('socios.crear') }}" class="btn btn-success">
+			<i class="fas fa-user-plus"></i>+ Nuevo Socio
+		</a>
+	</div>
 
-<form
-	method="GET"
-	action="{{ url_for('socios.listar') }}"
-	style="margin-bottom: 20px"
->
-	<input
-		type="text"
-		name="nombre"
-		placeholder="Buscar por nombre..."
-		value="{{ request.args.get('nombre', '') }}"
-	/>
-	<input
-		type="text"
-		name="email"
-		placeholder="Buscar por email..."
-		value="{{ request.args.get('email', '') }}"
-	/>
-	<button class="btn btn-primary" type="submit">Buscar</button>
-	<a href="{{ url_for('socios.listar') }}">Limpiar</a>
-</form>
+	<div class="card p-3 mb-4 bg-light">
+		<form
+			action="{{ url_for('socios.listar') }}"
+			method="GET"
+			class="d-flex gap-2"
+		>
+			{{ form.busqueda(class="form-control", placeholder="Buscar por nombre o
+			email...") }}
 
-<a
-	href="{{ url_for('socios.crear') }}"
-	style="display: block; margin-bottom: 20px"
-	>+ Nuevo Socio</a
->
+			<button class="btn btn-primary" type="submit">
+				<i class="fas fa-search"></i> Buscar
+			</button>
 
-<table border="1" style="width: 100%; border-collapse: collapse">
-	<thead>
-		<tr style="background-color: #f2f2f2">
-			<th>Nombre y Email</th>
-			<th>Libros en posesión</th>
-			<th>Acciones</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for socio in socios %}
-		<tr>
-			<td style="padding: 10px">
-				<strong>{{ socio.nombre }}</strong><br />
-				<small>{{ socio.email }}</small>
-				<button
-					onclick="location.href='{{ url_for('socios.ver', id=socio.id) }}'"
-					class="btn btn-primary"
-				>
-					Ver Detalles
-				</button>
-			</td>
-			<td style="padding: 10px">
-				{% if socio.libros %}
-				<ul style="margin: 0; padding-left: 20px">
-					{% for libro in socio.libros %}
-					<li>{{ libro.titulo }}</li>
-					{% endfor %}
-				</ul>
-				{% else %}
-				<span style="color: gray">Sin préstamos</span>
-				{% endif %}
-			</td>
-			<td style="padding: 10px; text-align: center">
-				<a href="{{ url_for('socios.editar', id=socio.id) }}">Editar</a> |
-				<a
-					href="{{ url_for('socios.borrar', id=socio.id) }}"
-					onclick="return confirm('¿Seguro que quieres borrar a este socio?')"
-					style="color: red"
-					>Borrar</a
-				>
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+			{% if busqueda %}
+			<a
+				href="{{ url_for('socios.listar') }}"
+				class="btn btn-outline-secondary"
+				title="Limpiar filtro"
+			>
+				<i class="fas fa-times"></i>
+			</a>
+			{% endif %}
+		</form>
+	</div>
+	{% if socios %}
+	<div class="table-responsive">
+		<table class="table table-hover table-striped align-middle">
+			<thead class="table-dark">
+				<tr>
+					<th>ID</th>
+					<th>Nombre</th>
+					<th>Email</th>
+					<th>Estado</th>
+					<th class="text-end">Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for socio in socios %}
+				<tr>
+					<td>{{ socio.id }}</td>
+					<td>{{ socio.nombre }}</td>
+					<td>{{ socio.email }}</td>
+					<td>
+						{% if socio.libros %}
+						<span class="badge bg-warning text-dark"
+							>{{ socio.libros|length }} Libro(s)</span
+						>
+						{% else %}
+						<span class="badge bg-success">Sin deudas</span>
+						{% endif %}
+					</td>
+					<td class="text-end">
+						<a
+							href="{{ url_for('socios.ver', id=socio.id) }}"
+							class="btn btn-info btn-sm text-white"
+							title="Ver Detalle"
+						>
+							Ver detalles
+						</a>
+						<a
+							href="{{ url_for('socios.editar', id=socio.id) }}"
+							class="btn btn-warning btn-sm"
+							title="Editar"
+						>
+							Edit
+						</a>
 
-{% if not socios %}
-<p>No se han encontrado socios.</p>
-{% endif %} {% endblock %}
+						{% if socio.libros %}
+						<button
+							class="btn btn-secondary btn-sm"
+							disabled
+							title="No se puede borrar con libros pendientes"
+						>
+							Eliminar
+						</button>
+						{% else %}
+						<a
+							href="{{ url_for('socios.borrar', id=socio.id) }}"
+							class="btn btn-danger btn-sm"
+							onclick="return confirm('¿Eliminar socio {{ socio.nombre }}?')"
+							title="Eliminar"
+						>
+							Eliminar
+						</a>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% else %}
+	<div class="alert alert-warning text-center">
+		No se encontraron socios con ese criterio.
+		<br />
+		<a href="{{ url_for('socios.listar') }}" class="btn btn-link">Ver todos</a>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from app.forms.socio_form import SocioForm
 from app.services.socios_service import *
 from flask import flash 
+from app.forms.buscar_form import BuscarForm
 from app.decorators import role_required
 
 socios_bp = Blueprint(
@@ -11,10 +12,29 @@ socios_bp = Blueprint(
 )
 
 @socios_bp.route("/")
-@role_required("admin")
+@role_required('admin') # R17: Ver socios es solo Admin
 def listar():
-    socios = listar_socios()
-    return render_template("paginas/socios/socios.html", socios=socios)
+    # 1. Instanciamos el formulario con los datos de la URL (GET)
+    form = BuscarForm(request.args)
+    
+    socios = []
+    busqueda_activa = False
+
+    # 2. Si hay algo escrito en el buscador...
+    if form.validate() and form.busqueda.data:
+        socios = buscar_socios(form.busqueda.data)
+        busqueda_activa = True
+    else:
+        # 3. Si no, listamos todos
+        socios = listar_socios()
+
+    # 4. Renderizamos la plantilla pasando el form y los resultados
+    return render_template(
+        "paginas/socios/socios.html", 
+        socios=socios, 
+        form=form, 
+        busqueda=busqueda_activa
+    )
 
 @socios_bp.route("/con-prestamos")
 @role_required("admin")

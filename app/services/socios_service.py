@@ -1,4 +1,5 @@
 from app import db
+from sqlalchemy import or_
 # Importamos cada modelo de SU PROPIA casa
 from app.models.socio import Socio
 from app.services.libros_service import listar_libros_prestados
@@ -42,3 +43,21 @@ def borrar_socio(socio_id):
         db.session.commit()
         return True, "Socio eliminado con éxito."
     return False, "Socio no encontrado."
+
+def buscar_socios(termino):
+    """
+    Busca socios cuyo nombre O email contengan el término.
+    Cumple con el requisito R16.
+    """
+    if not termino:
+        return Socio.query.all()
+    
+    filtro = f"%{termino}%"
+    
+    # Buscamos coincidencias en nombre O en email (ilike ignora mayúsculas)
+    return Socio.query.filter(
+        or_(
+            Socio.nombre.ilike(filtro),
+            Socio.email.ilike(filtro)
+        )
+    ).all()

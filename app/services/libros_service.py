@@ -2,6 +2,7 @@ from app.models import libro
 from sqlalchemy import func
 from app import db
 from app.models.libro import Libro
+from sqlalchemy import or_
 
 
 ### Servicios para listar libros ###     
@@ -10,10 +11,10 @@ def listar_libros():
     #return Libro.query.order_by(func.lower(Libro.titulo)).all()
 
 def listar_libros_disponibles():
-    return Libro.query.filter(Libro.codigo_socio == None).all()
+    return Libro.query.filter(Libro.id_socio == None).all()
 
 def listar_libros_prestados():
-    return Libro.query.filter(Libro.codigo_socio != None).all()
+    return Libro.query.filter(Libro.id_socio != None).all()
 
 def obtener_libro(id):
     return Libro.query.get(id)
@@ -72,3 +73,43 @@ def devolver_libro(id_libro):
         db.session.commit()
         return True
     return False
+
+
+### Funcion para eliminar un libro, si ya esta rpestado no se podra eliminar
+def eliminar_libro(id_libro):
+    libro = Libro.query.get(id_libro)
+    
+    if not libro:
+        return False, "Libro no encontrado"
+    
+    # REGLA DE ORO: No borrar si está prestado
+    # Verificamos si tiene un id_socio asignado
+    if libro.id_socio is not None:
+        return False, "No se puede eliminar un libro que está actualmente prestado."
+    
+    try:
+        db.session.delete(libro)
+        db.session.commit()
+        return True, "Libro eliminado correctamente."
+    except Exception as e:
+        db.session.rollback()
+        return False, f"Error al eliminar: {str(e)}"
+    
+### Funcion para buscar libros 
+def buscar_libros(termino_busqueda):
+    """
+    Busca libros cuyo título O autor contengan el término.
+    """
+    if not termino_busqueda:
+        # Si no escriben nada, devolvemos todos
+        return Libro.query.all()
+    
+    # El % es un comodín en SQL (buscar "lo que sea" + termino + "lo que sea")
+    filtro = f"%{termino_busqueda}%"
+    
+    return Libro.query.filter(
+        or_(
+            Libro.titulo.ilike(filtro),
+            Libro.autor.ilike(filtro)
+        )
+    ).all()
