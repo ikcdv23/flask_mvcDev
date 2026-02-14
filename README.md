@@ -1,111 +1,76 @@
-Al utilizar el proyecto hay que crear el directorio venv con :
-python -m venv venv
-
-Despues hay que instalar las dependencias con :
-pip install -r requirements.txt
-
-Siempre que se instalen nuevas dependencias hay que actualizar el archivo requirements.txt con:
-pip freeze > requirements.txt
-
-
-
-==== COMANDOS ÚTILES ====
-- Crear la carpeta de trabajo: primer_flask
-- Abrir cmd o powershell en la carpeta
-- Crear el entorno virtual: python -m venv venv 
-- Esto crea una carpeta venv que contiene todo el entorno Python del proyecto.
-- Activar el entorno: venv\Scripts\activate
-- Instalar Flask: pip install flask
-- Mirar los paquetes instalados: pip freeze
-
 # Flask MVC - Sistema de Gestión de Biblioteca
 
-Este proyecto implementa una arquitectura MVC (Modelo-Vista-Controlador) estricta con una **capa de servicios intermedia**, garantizando un código desacoplado, escalable y mantenible.  
+Proyecto web desarrollado con Flask que implementa una arquitectura MVC con una capa de servicios intermedia. Permite gestionar libros, socios y préstamos, e incluye sistema de autenticación, roles y protección CSRF.
 
-Incluye autenticación segura, gestión de roles y protección frente a vulnerabilidades web comunes.
+## Guía de Instalación
 
----
+Sigue estos pasos en orden estricto para configurar y ejecutar el proyecto en tu equipo local:
 
-## Características Principales
+1. **Accede a la carpeta del proyecto**
+   Abre tu terminal (CMD o PowerShell) y navega hasta el directorio:
 
-### Gestión de Libros (CRUD)
-- Alta, baja, modificación y consulta de libros.
+   cd flask_mvcDev
 
-### Gestión de Socios (CRUD)
-- Administración completa de usuarios lectores.
 
-### Sistema de Préstamos
-- Lógica de negocio para asignación y devolución de libros.
-- Vinculación entre libros y socios.
 
-### Seguridad
-- Autenticación de usuarios (Login/Logout) mediante **Flask-Login**.
-- Contraseñas encriptadas mediante **hash SHA-256**.
-- Protección **CSRF** en todos los formularios (Flask-WTF).
-- Decoradores personalizados `@role_required` para proteger rutas administrativas.
+2. **Crea el entorno virtual**
+Esto generará una carpeta `venv` aislada para las dependencias del proyecto:
 
-### Interfaz
-- Diseño responsivo con CSS personalizado.
+python -m venv venv
 
----
 
-## Arquitectura del Proyecto
 
-El sistema sigue una arquitectura por capas que separa claramente las responsabilidades:
+3. **Activa el entorno virtual**
+* En Windows (CMD/PowerShell):
 
-### Controladores (Controllers)
-- Gestionan las rutas HTTP.
-- Validan formularios.
-- No acceden directamente a la base de datos.
-- Delegan la lógica de negocio a los servicios.
+venv\Scripts\activate
 
-### Servicios (Services)
-- Contienen la lógica de negocio.
-- Aplican reglas de préstamos y validaciones complejas.
-- Son la única capa que interactúa con los modelos.
 
-### Modelos (Models)
-- Representan las tablas de la base de datos mediante **SQLAlchemy**.
 
-### Vistas (Templates)
-- Archivos HTML renderizados con **Jinja2**.
 
----
+* En Mac/Linux:
+
+source venv/bin/activate
+
+
+
+
+
+
+4. **Instala las dependencias**
+Lee el archivo de requerimientos e instala los paquetes necesarios:
+
+pip install -r requirements.txt
+
+
+
+5. **Ejecuta la aplicación**
+Inicia el servidor local de Flask:
+
+python run.py
 
 ## Estructura del Proyecto
 
+```text
 flask_mvcDev/
 ├── app/
-│ ├── controllers/ # Rutas y lógica de control (auth, libros, socios)
-│ ├── models/ # Definición de tablas (Libro, Socio, Usuario)
-│ ├── services/ # Lógica de negocio
-│ ├── forms/ # Formularios y validaciones (WTForms)
-│ ├── templates/ # Vistas HTML (Jinja2)
-│ ├── static/ # CSS, JS e imágenes
-│ ├── decorators.py # Decorador de seguridad personalizado
-│ └── init.py # Configuración inicial de la aplicación y base de datos
-├── instance/ # Base de datos SQLite
-├── run.py # Punto de entrada de la aplicación
-└── requirements.txt # Dependencias del proyecto
+│   ├── controllers/   # Rutas HTTP y validación de peticiones
+│   ├── models/        # Modelos de base de datos (SQLAlchemy)
+│   ├── services/      # Lógica de negocio y reglas de la aplicación
+│   ├── forms/         # Definición de formularios (WTForms)
+│   ├── templates/     # Vistas HTML (Jinja2)
+│   ├── static/        # Archivos estáticos (CSS, JS)
+│   ├── decorators.py  # Decoradores personalizados (ej. protección de rutas)
+│   └── __init__.py    # Configuración inicial de Flask y extensiones
+├── instance/          # Base de datos SQLite local
+├── run.py             # Punto de entrada para levantar el servidor
+└── requirements.txt   # Lista de dependencias de Python
 
-## Instalación y Ejecución
 
-### 1. Preparar el entorno
+## Mantenimiento de Dependencias
 
-# Acceder a la carpeta del proyecto
-cd flask_mvcDev
+Si durante el desarrollo instalas un paquete nuevo (por ejemplo, `pip install nuevo_paquete`), debes actualizar el registro para que otros desarrolladores puedan instalarlo:
 
-# (Opcional) Crear y activar un entorno virtual
-python -m venv venv
 
-# En Windows:
-venv\Scripts\activate
+pip freeze > requirements.txt
 
-# En Mac/Linux:
-source venv/bin/activate
-
-# Para instalar las dependencias haremos uso de requirements.txt
-pip install -r requirements.txt
-
-# Iniciar todo
-py run.py
